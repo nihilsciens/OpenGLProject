@@ -33,6 +33,8 @@ struct Display {
 *		width: width of the display window.
 *		height: height of the display window.
 *		title: window title as a char pointer.
+*	@return:
+*		A display pointer of type struct Display.
 */
 struct Display* display_Constructor(int width, int height, char* title);
 
