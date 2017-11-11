@@ -1,7 +1,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <GL\glew.h>
+
+// Personal header files
 #include "display.h"
+#include "shader.h"
+
 
 int wmain(int argc, char* argv[]) {
 

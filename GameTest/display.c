@@ -51,6 +51,7 @@ void display_Destructor(struct Display* D_input) {
 	SDL_GL_DeleteContext(D_input->main_GLContext);
 	SDL_DestroyWindow(D_input->main_Window);
 	SDL_Quit();
+	free(D_input);
 }
 
 void display_Clear(float r, float g, float b, float a) {
