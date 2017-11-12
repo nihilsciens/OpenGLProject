@@ -1,6 +1,7 @@
 #include "shader.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct Shader* shader_Constructor(char* fileName) {
 	// Define new struct pointer of type Shader
@@ -9,9 +10,20 @@ struct Shader* shader_Constructor(char* fileName) {
 	// Create new main program
 	S->main_Program = glCreateProgram();
 
-	// Create Shader[0] vertex shader and Shader[1] fragment shader
-	S->main_Shaders[0] = shader_CreateShader(shader_LoadShader(fileName), GL_VERTEX_SHADER);
-	S->main_Shaders[1] = shader_CreateShader(shader_LoadShader(fileName), GL_FRAGMENT_SHADER);
+	// Prepare the text file character pointers
+	size_t needed = snprintf(NULL, 0, "%s.fs", fileName) + 1;
+	char* vertexName = malloc(needed);
+	char* fragmentName = malloc(needed);
+	snprintf(vertexName, needed, "%s.vs", fileName);
+	snprintf(fragmentName, needed, "%s.fs", fileName);
+
+	/*
+	* Create Shader[0] vertex shader and Shader[1] fragment shader.
+	* The file convention is same name for vertex and fragment shader
+	* with the exception of file extension *.vs and *.vf.
+	*/
+	S->main_Shaders[0] = shader_CreateShader(S, shader_LoadShader(vertexName), GL_VERTEX_SHADER);
+	S->main_Shaders[1] = shader_CreateShader(S, shader_LoadShader(fragmentName), GL_FRAGMENT_SHADER);
 
 	// Attach shaders to program
 	for (int i = 0; i < NUM_SHADERS; i++)
@@ -25,12 +37,13 @@ struct Shader* shader_Constructor(char* fileName) {
 	glBindAttribLocation(S->main_Program, 0, "position");
 
 	// Link the program and check if program failed to link shader to program
+	//############# THERE IS AN ERROR HERE ##############
 	glLinkProgram(S->main_Program);
-	shader_CheckError(S->main_Program, GL_LINK_STATUS, true, "Error: Program link failure: ");
+	shader_CheckError(S->main_Program, GL_LINK_STATUS, true, "Error: Program link failure");
 
 	// Validate the program and check if program is actually usable
 	glValidateProgram(S->main_Program);
-	shader_CheckError(S->main_Program, GL_VALIDATE_STATUS, true, "Error: Program invalid failure: ");
+	shader_CheckError(S->main_Program, GL_VALIDATE_STATUS, true, "Error: Program invalid failure");
 
 	// Return new Shader struct pointer
 	return S;
@@ -57,7 +70,7 @@ void shader_Destructor(struct Shader* S_input) {
 }
 
 void shader_Bind(struct Shader* S_input) {
-	// 
+	// Binds the program
 	glUseProgram(S_input->main_Program);
 }
 
@@ -129,10 +142,35 @@ void shader_CheckError(GLuint shader, GLuint flag, bool isProgram, char* errorMe
 		else
 			glGetShaderInfoLog(shader, sizeof(error), NULL, error);
 	}
-
+	
 	printf("%s: '%s'\n", errorMessage, error);
 }
 
-GLuint shader_CreateShader(char* text, GLenum shaderType) {
+GLuint shader_CreateShader(struct Shader* S_input, char* text, GLenum shaderType) {
+
+	// Define a new shader
+	GLuint shader = glCreateShader(shaderType);
+
+	// Check if OpenGL actually managed to create a shader
+	if (shader == 0)
+		printf("Shader creation error!");
+
+	// Prepare specific GLchar* and GLint forms of parameters
+	GLchar* shaderSourceStrings[1];
+	GLint shaderSourceStringLength[1];
+	shaderSourceStrings[0] = text;
+	shaderSourceStringLength[0] = sizeof(text) / sizeof(char);
+
+	// Send the shader to OpenGL
+	glShaderSource(shader, 1, shaderSourceStrings, shaderSourceStringLength);
+	
+	// Compile the shader
+	glCompileShader(shader);
+
+	// Check for shader error
+	shader_CheckError(S_input->main_Program, GL_COMPILE_STATUS, false, "Error: Shader compilation failure");
+
+	// Return the shader
+	return shader;
 
 }

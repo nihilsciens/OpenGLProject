@@ -83,6 +83,6 @@ void shader_CheckError(GLuint shader, GLuint flag, bool isProgram, char* errorMe
 *	@return:
 *		The specific shader of type GLuint.
 */
-GLuint shader_CreateShader(char* text, GLenum shaderType);
+GLuint shader_CreateShader(struct Shader* S_input, char* text, GLenum shaderType);
 
 #endif
