@@ -5,7 +5,6 @@
 #include <include\SDL.h>
 
 struct Display* display_Constructor(int width, int height, char* title) {
-
 	// Initialize the Display via SDL
 	SDL_Init(SDL_INIT_EVERYTHING);
 

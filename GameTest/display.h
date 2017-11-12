@@ -7,9 +7,11 @@
 #define DISPLAY_H
 
 // Define primitive type boolean
+#ifndef typedef bool
 typedef int bool;
 #define true 1
 #define false 0
+#endif
 
 // The necessary libraries
 #include <include\SDL.h>

@@ -6,7 +6,14 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-// This shader is of type 2: fragment shader and vertex shader
+// Define primitive type boolean
+#ifndef typedef bool
+typedef int bool;
+#define true 1
+#define false 0
+#endif
+
+// // This shader implementation harbors two types of shaders: (0) vertex shader and (1) fragment shader
 #define NUM_SHADERS 2
 
 // For the function LoadShader: assume maximum file length
@@ -44,9 +51,9 @@ void shader_Destructor(struct Shader* S_input);
 
 /*
 *	Binds the GPU to this shader type. If any other shader is
-*	already bound to the GPU, unbind first.
+*	already bound to the GPU, unbinds them first.
 */
-void shader_Bind();
+void shader_Bind(struct Shader* S_input);
 
 /*
 *	Loads a text from harddrive, converts it to a character pointer
@@ -57,5 +64,25 @@ void shader_Bind();
 *		character pointer for the text in the file.
 */
 char* shader_LoadShader(char* fileName);
+
+/*
+*	Identifies error messages and prints them out.
+*	@parameter:
+*		shader:
+*		flag:
+*		isProgram:
+*		errorMessage:
+*/
+void shader_CheckError(GLuint shader, GLuint flag, bool isProgram, char* errorMessage);
+
+/*
+*	Creates a shader of a specific type and returns it as a GLuint.
+*	@parameter:
+*		text: The full text of our proposed shader.
+*		shaderType: Defines which type of shader we wish to create.
+*	@return:
+*		The specific shader of type GLuint.
+*/
+GLuint shader_CreateShader(char* text, GLenum shaderType);
 
 #endif

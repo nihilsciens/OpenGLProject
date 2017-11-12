@@ -12,6 +12,9 @@ int wmain(int argc, char* argv[]) {
 	// Construct a new Display
 	struct Display* my_Display = display_Constructor(800, 600, "This is my title!");
 
+	// Test shader_LoadShader
+	printf(shader_LoadShader("\main.c"));
+
 	// Will be active for as long as the display is active
 	while (!display_IsClosed(my_Display)) {
 		// Clear the display with chosen color
